@@ -1,0 +1,31 @@
+{
+    "os": "Linux-5.15.0-1036-azure-x86_64-with-glibc2.10",
+    "python": "3.8.1",
+    "heartbeatAt": "2024-03-01T10:40:16.588592",
+    "startedAt": "2024-03-01T10:40:15.745247",
+    "docker": null,
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "gpu_count": 1,
+    "cpu_count": 24,
+    "cuda": null,
+    "args": [
+        "--exp_name",
+        "random_name",
+        "--tag",
+        "development",
+        "--seed",
+        "2323"
+    ],
+    "state": "running",
+    "program": "train.py",
+    "codePath": "train.py",
+    "git": {
+        "remote": "https://github.com/egg-west/latentplan.git",
+        "commit": "c096a5c6e37f78b918946cf8d26119a08d156c73"
+    },
+    "email": "lin.svc@outlook.com",
+    "root": "/home/v-linjiexu/latentplan",
+    "host": "GCRAZGDL1127",
+    "username": "FAREAST.v-linjiexu",
+    "executable": "/anaconda/envs/38/bin/python"
+}

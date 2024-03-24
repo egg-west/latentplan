@@ -1,0 +1,39 @@
+Epoch: 0 / 25 | halfcheetah-medium-expert-v2 | random_name
+[ utils/training ] Making optimizer at epoch 0
+[ utils/training ] epoch 0 [    0 / 3903 ]  train reconstruction loss 3.49945 |  train commit loss 0.04359 | | lr 2.000e-04 | lr_mult: 0.0002 | t: 0.20
+[ utils/training ] epoch 0 [  100 / 3903 ]  train reconstruction loss 1.01505 |  train commit loss 0.22252 | | lr 2.000e-04 | lr_mult: 0.0239 | t: 15.34
+[ utils/training ] epoch 0 [  200 / 3903 ]  train reconstruction loss 0.65482 |  train commit loss 0.24986 | | lr 2.000e-04 | lr_mult: 0.0475 | t: 15.28
+Traceback (most recent call last):
+  File "train.py", line 149, in <module>
+    trainer.train(model, dataset)
+  File "/home/v-linjiexu/latentplan/latentplan/utils/training.py", line 67, in train
+    *_, recon_loss, vq_loss, commit_loss = model(*batch)
+  File "/anaconda/envs/38/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/v-linjiexu/latentplan/latentplan/models/vqvae.py", line 417, in forward
+    reconstructed, latents, feature = self.model(torch.cat([joined_inputs, terminals], dim=2), state)
+  File "/anaconda/envs/38/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/v-linjiexu/latentplan/latentplan/models/vqvae.py", line 246, in forward
+    trajectory_feature = self.encode(joined_inputs)
+  File "/home/v-linjiexu/latentplan/latentplan/models/vqvae.py", line 206, in encode
+    x = self.encoder(x)
+  File "/anaconda/envs/38/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/anaconda/envs/38/lib/python3.8/site-packages/torch/nn/modules/container.py", line 141, in forward
+    input = module(input)
+  File "/anaconda/envs/38/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/v-linjiexu/latentplan/latentplan/models/transformers.py", line 133, in forward
+    x = x + self.attn(self.ln1(x))
+  File "/anaconda/envs/38/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/v-linjiexu/latentplan/latentplan/models/transformers.py", line 100, in forward
+    q = self.query(x).view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
+  File "/anaconda/envs/38/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/anaconda/envs/38/lib/python3.8/site-packages/torch/nn/modules/linear.py", line 103, in forward
+    return F.linear(input, self.weight, self.bias)
+  File "/anaconda/envs/38/lib/python3.8/site-packages/torch/nn/functional.py", line 1848, in linear
+    return torch._C._nn.linear(input, weight, bias)
+KeyboardInterrupt

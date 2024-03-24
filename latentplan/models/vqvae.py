@@ -369,7 +369,7 @@ class VQContinuousVAE(nn.Module):
         padded = torch.tensor(self.padding_vector, dtype=torch.float32,
                               device=joined_inputs.device).repeat(b, t, 1)
         terminal_mask = torch.clone(1 - terminals).repeat(1, 1, joined_inputs.shape[-1])
-        joined_inputs = joined_inputs*terminal_mask+(1-terminal_mask)*padded
+        joined_inputs = joined_inputs * terminal_mask + (1 - terminal_mask) * padded
 
         trajectory_feature = self.model.encode(torch.cat([joined_inputs, terminals], dim=2))
         if self.model.ma_update:
@@ -402,18 +402,30 @@ class VQContinuousVAE(nn.Module):
         """
 
         joined_inputs = joined_inputs.to(dtype=torch.float32)
+        # print(f"{joined_inputs.shape=}")
+        ## joined_inputs.shape=torch.Size([512, 24, 25])
         b, t, joined_dimension = joined_inputs.size()
         padded = torch.tensor(self.padding_vector, dtype=torch.float32,
                               device=joined_inputs.device).repeat(b, t, 1)
 
         if terminals is not None:
             terminal_mask = torch.clone(1 - terminals).repeat(1, 1, joined_inputs.shape[-1])
-            joined_inputs = joined_inputs*terminal_mask+(1-terminal_mask)*padded
+            joined_inputs = joined_inputs * terminal_mask + (1 - terminal_mask) * padded
+        # print(f"padded: {joined_inputs.shape=}")
+        ## padded: joined_inputs.shape=torch.Size([512, 24, 25])
 
-        state = joined_inputs[:,0,:self.observation_dim]
+        state = joined_inputs[:, 0, :self.observation_dim]
+        # print(f"{state.shape=}")
+        ## state.shape=torch.Size([512, 17])
+
         ## [ B x T x embedding_dim ]
         # forward the GPT model
         reconstructed, latents, feature = self.model(torch.cat([joined_inputs, terminals], dim=2), state)
+        #print(f"{reconstructed.shape=}, {latents.shape=}, {feature.shape=}")
+        # reconstructed.shape=torch.Size([512, 24, 26]),
+        # latents.shape=torch.Size([512, 8, 512]),
+        # feature.shape=torch.Size([512, 8, 512])
+
         pred_trajectory = torch.reshape(reconstructed[:, :, :-1], shape=[b, t, joined_dimension])
         pred_terminals = reconstructed[:, :, -1, None]
 
@@ -429,14 +441,14 @@ class VQContinuousVAE(nn.Module):
             ])
             mse = F.mse_loss(pred_trajectory, joined_inputs, reduction='none')*weights[None, None, :]
 
-            first_action_loss = self.first_action_weight*F.mse_loss(joined_inputs[:, 0, self.observation_dim:self.observation_dim+self.action_dim],
+            first_action_loss = self.first_action_weight * F.mse_loss(joined_inputs[:, 0, self.observation_dim:self.observation_dim+self.action_dim],
                                                                     pred_trajectory[:, 0, self.observation_dim:self.observation_dim+self.action_dim])
-            sum_reward_loss = self.sum_reward_weight*F.mse_loss(joined_inputs[:, :, -2].mean(dim=1),
+            sum_reward_loss = self.sum_reward_weight * F.mse_loss(joined_inputs[:, :, -2].mean(dim=1),
                                                                 pred_trajectory[:, :, -2].mean(dim=1))
-            last_value_loss = self.last_value_weight*F.mse_loss(joined_inputs[:, -1, -1],
+            last_value_loss = self.last_value_weight * F.mse_loss(joined_inputs[:, -1, -1],
                                                                 pred_trajectory[:, -1, -1])
             cross_entropy = F.binary_cross_entropy(pred_terminals, torch.clip(terminals.float(), 0.0, 1.0))
-            reconstruction_loss = (mse*mask*terminal_mask).mean()+cross_entropy
+            reconstruction_loss = (mse * mask * terminal_mask).mean() + cross_entropy
             reconstruction_loss = reconstruction_loss + first_action_loss + sum_reward_loss + last_value_loss
 
             #reconstruction_loss = torch.sqrt((mse * mask).sum(dim=1)).mean()

@@ -1,0 +1,1 @@
+{"recontruction_loss": 0.6548225283622742, "commit_loss": 0.24985919892787933, "lr": 0.0002, "lr_mulr": 0.04754541534189572, "_timestamp": 1710387468, "_runtime": 34, "_step": 200, "_wandb": {"runtime": 49}}
